@@ -276,6 +276,7 @@ class DataclassConverterOptions:
     :param substitutions: SQL type to be substituted for a specific Python type.
     :param factory: Creates new column, table, struct and namespace instances.
     :param skip_annotations: Annotation classes to ignore on table column types.
+    :param qualifier_character_mark: The character to use in qualified names (defaults to double-quotation)
     """
 
     enum_mode: EnumMode = EnumMode.TYPE
@@ -290,6 +291,7 @@ class DataclassConverterOptions:
     substitutions: dict[TypeLike, SqlDataType] = dataclasses.field(default_factory=dict)
     factory: ObjectFactory = dataclasses.field(default_factory=ObjectFactory)
     skip_annotations: tuple[type, ...] = ()
+    qualifier_character_mark: str = '"'
 
 
 class DataclassConverter:
@@ -310,7 +312,8 @@ class DataclassConverter:
     ) -> SupportsQualifiedId:
         mapped_name = self.options.namespaces.get(module_name)
         if self.options.qualified_names:
-            return QualifiedId(mapped_name, object_name)
+            # Datahenge: Adding a third argument: 'quote_delimiter'
+            return QualifiedId(mapped_name, object_name, self.options.qualifier_character_mark)
         else:
             return PrefixedId(mapped_name, object_name)
 

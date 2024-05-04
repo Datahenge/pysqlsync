@@ -126,6 +126,7 @@ class PrefixedId:
 class QualifiedId:
     namespace: Optional[str]
     id: str
+    quote_delimiter: str = '"'
 
     @property
     def scope_id(self) -> Optional[str]:
@@ -144,16 +145,18 @@ class QualifiedId:
 
     @property
     def quoted_id(self) -> str:
+
+        _qd = self.quote_delimiter  # Usually a double quotation mark, but BigQuery needs backticks
         if self.namespace is not None:
             return (
-                '"'
-                + self.namespace.replace('"', '""')
-                + '"."'
-                + self.id.replace('"', '""')
-                + '"'
+                _qd
+                + self.namespace.replace(_qd, f"{_qd}{_qd}")
+                + f"{_qd}.{_qd}"
+                + self.id.replace(_qd, f"{_qd}{_qd}")
+                + _qd
             )
         else:
-            return '"' + self.id.replace('"', '""') + '"'
+            return quote_delimiter + self.id.replace(quote_delimiter, f"{quote_delimiter}{quote_delimiter}") + quote_delimiter
 
     def rename(self, id: str) -> "SupportsQualifiedId":
         return QualifiedId(self.namespace, id)

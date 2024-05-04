@@ -10,11 +10,16 @@
         "source.organizeImports": "explicit"
     },
     "files.insertFinalNewline": true,
+    "files.exclude": {
+        "**/.git": true,
+        "**/__pycache__": true,
+        "**/*.egg-info": true,
+        "venv.d": true,
+    },
     "isort.args": [
         "--profile",
         "black"
     ],
-    "python.analysis.typeCheckingMode": "off",
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     }
